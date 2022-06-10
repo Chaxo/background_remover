@@ -16,6 +16,6 @@ You can access it [here](https://share.streamlit.io/chaxo/background_remover/mai
 Simply upload an image and wait for it to be processed.
 
 ## To-do list:
-- [] Optimize code
+- [] Handle exception (RGBA)
 - [] Add more details/instructions to the Streamlit page
-- [] Improve UI/UX
+- [] Improve UI
