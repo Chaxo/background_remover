@@ -1,3 +1,4 @@
+import base64
 import cv2
 from pyparsing import col
 import torch
@@ -7,7 +8,8 @@ from PIL import Image
 from torchvision import transforms
 from io import BytesIO
 
-
+# This cache might solve the memory issue on Streamlit
+@st.cache(allow_output_mutation=True, hash_funcs={torch.nn.parameter.Parameter: lambda _: None})
 def load_model():
     model = torch.hub.load('pytorch/vision:v0.10.0', 'deeplabv3_resnet101', pretrained=True)
     model.eval()
@@ -42,6 +44,14 @@ def remove_background(model, input_file):
     foreground = make_transparent_foreground(input_image, bin_mask)
     return foreground, bin_mask
 
+# Workaround download function so Streamlit page does not reload
+def get_image_download_link(img,filename,text):
+    buffered = BytesIO()
+    img.save(buffered, format="PNG")
+    img_str = base64.b64encode(buffered.getvalue()).decode()
+    href =  f'<a href="data:file/txt;base64,{img_str}" download="{filename}">{text}</a>'
+    return href 
+
 # Streamlit page layout
 st.header("Welcome to my background remover")
 
@@ -66,16 +76,31 @@ if uploaded_image is not None:
     # Preview of processd image
     st.image(processed_image, width=500)
 
-    # Convert to downloadable format
-    buf = BytesIO()
-    processed_image.save(buf, format="PNG")
-    byte_im = buf.getvalue()
+    # Download button for the processed image
+    st.markdown(get_image_download_link(processed_image,'output_image.png','Download'), unsafe_allow_html=True)
 
-    # Download button
-    btn = st.download_button(
-             label="Download image",
-             data=byte_im,
-             file_name="image.png",
-             mime="image/png"
-           )
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    ##  Old code for the download button. Problem was that it reloads the page after clicking. 
+    ##  Streamlit is apparently working on adding a feature to not reload page.
+    
+            # # Convert to downloadable format
+            # buf = BytesIO()
+            # processed_image.save(buf, format="PNG")
+            # byte_im = buf.getvalue()
+
+            # # Download button
+            # btn = st.download_button(
+            #         label="Download image",
+            #         data=byte_im,
+            #         file_name="image.png",
+            #         mime="image/png"
+            #     )
 
