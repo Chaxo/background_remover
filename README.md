@@ -1,6 +1,6 @@
 ## My personal background remover tool
 This tool takes in an image and removes the background using [DeepLabV3](https://pytorch.org/hub/pytorch_vision_deeplabv3_resnet101/).\
-The output will be an image with a transparent background available for download.
+The output is a png image with a transparent background available for download.
 
 **Example**
 
@@ -12,7 +12,7 @@ Processed\
 
 ## How to use:
 The tool is hosted on Streamlit service.\
-You can access it [here](https://share.streamlit.io/chaxo/my_transparent_background/main/main.py).\
+You can access it [here](https://share.streamlit.io/chaxo/background_remover/main/main.py).\
 Simply upload an image and wait for it to be processed.
 
 ## To-do list:
