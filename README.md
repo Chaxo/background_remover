@@ -1,12 +1,11 @@
-A simle personal application that takes an image, remove the background and make it transparent.
-Currently only usable on personal machine and requires adjustments to paths/directories
+This tool takes in an image and removes the background using DeepLabV3.
+The output will be an image with a transparent background available for download.
 
-Resources used:
-- DeepLabV3
-https://pytorch.org/hub/pytorch_vision_deeplabv3_resnet101/
-- Tutorial
-https://news.machinelearning.sg/posts/beautiful_profile_pics_remove_background_image_with_deeplabv3/
+How to use:
+Currently the tool is hosted on Streamlit service. Visit via:
+https://share.streamlit.io/chaxo/my_transparent_background/main/main.py
 
-To do list:
-- Support uploading and downloading picture
-- A standalone application / web application
+To-do list:
+- Optimize code
+- Add more details/instructions to the Streamlit page
+- Improve UI/UX
