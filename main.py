@@ -1,10 +1,12 @@
 import cv2
+from pyparsing import col
 import torch
 import numpy as np
+import streamlit as st
 from PIL import Image
 from torchvision import transforms
 from matplotlib import pyplot as plt
-
+from io import BytesIO
 
 def load_model():
     model = torch.hub.load('pytorch/vision:v0.10.0', 'deeplabv3_resnet101', pretrained=True)
@@ -41,7 +43,40 @@ def remove_background(model, input_file):
     return foreground, bin_mask
 
 
-deeplab_model = load_model()
-foreground, bin_mask = remove_background(deeplab_model, 'C:/Users/Chaxo/Documents/my_transparent_background/input_pics/dog.jpg')
-plt.imshow(foreground)
-Image.fromarray(foreground).save("C:/Users/Chaxo/Documents/my_transparent_background/output_pics/dog.png")
+# Streamlit page layout
+st.header("Welcome to my background remover")
+
+# Upload image
+uploaded_image = st.file_uploader("Upload Images", type=["png","jpg","jpeg"])
+
+# Once an image is uploaded
+if uploaded_image is not None:
+    # Uploaded image details
+    image_details = {"filename":uploaded_image.name, "filetype":uploaded_image.type, "filesize":uploaded_image.size}
+    st.write(image_details)
+
+    # Preview the uploaded image
+    img = Image.open(uploaded_image)
+    st.image(uploaded_image, width=500)
+
+    # Call the deeplabv3 and process uploaded image
+    deeplab_model = load_model()
+    foreground, bin_mask = remove_background(deeplab_model, uploaded_image)
+    processed_image = Image.fromarray(foreground)
+
+    # Preview of processd image
+    st.image(processed_image, width=500)
+
+    # Convert to downloadable format
+    buf = BytesIO()
+    processed_image.save(buf, format="PNG")
+    byte_im = buf.getvalue()
+
+    # Download button
+    btn = st.download_button(
+             label="Download image",
+             data=byte_im,
+             file_name="image.png",
+             mime="image/png"
+           )
+
