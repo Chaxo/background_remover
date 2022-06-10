@@ -56,7 +56,7 @@ def get_image_download_link(img,filename,text):
 st.header("Welcome to my background remover")
 
 # Upload image
-uploaded_image = st.file_uploader("Upload Images", type=["png","jpg","jpeg"])
+uploaded_image = st.file_uploader("Limit 1080 x 1080 dimension per image due to Streamlit's limited processing capability" , type=["png","jpg","jpeg"])
 
 # Once an image is uploaded
 if uploaded_image is not None:
