@@ -5,8 +5,8 @@ import numpy as np
 import streamlit as st
 from PIL import Image
 from torchvision import transforms
-from matplotlib import pyplot as plt
 from io import BytesIO
+
 
 def load_model():
     model = torch.hub.load('pytorch/vision:v0.10.0', 'deeplabv3_resnet101', pretrained=True)
@@ -42,9 +42,6 @@ def remove_background(model, input_file):
     foreground = make_transparent_foreground(input_image, bin_mask)
     return foreground, bin_mask
 
-# Load the model once
-deeplab_model = load_model()
-
 # Streamlit page layout
 st.header("Welcome to my background remover")
 
@@ -62,6 +59,7 @@ if uploaded_image is not None:
     st.image(uploaded_image, width=500)
 
     # Call the deeplabv3 and process uploaded image
+    deeplab_model = load_model()
     foreground, bin_mask = remove_background(deeplab_model, uploaded_image)
     processed_image = Image.fromarray(foreground)
 
