@@ -17,5 +17,6 @@ Simply upload an image and wait for it to be processed.
 
 ## To-do list:
 - [] Handle exception (RGBA)
-- [] Add more details/instructions to the Streamlit page
+- [] Limit image dimension
+- [] Add introduction/instructions
 - [] Improve UI
