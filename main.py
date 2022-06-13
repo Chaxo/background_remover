@@ -1,6 +1,5 @@
 import base64
 import cv2
-from pyparsing import col
 import torch
 import numpy as np
 import streamlit as st
@@ -53,54 +52,42 @@ def get_image_download_link(img,filename,text):
     return href 
 
 # Streamlit page layout
-st.header("Welcome to my background remover")
+st.subheader("Welcome to my background remover tool")
+st.markdown("Upload an image and it will remove the background and make it transparent.  \n" 
+            "For more information, visit the [GitHub page](https://github.com/Chaxo/background_remover)")
 
 # Upload image
-uploaded_image = st.file_uploader("Limit 1080 x 1080 dimension per image due to Streamlit's limited processing capability" , type=["png","jpg","jpeg"])
+uploaded_image = st.file_uploader("Limit 1500px image width and height" , type=["png","jpg","jpeg"])
 
 # Once an image is uploaded
 if uploaded_image is not None:
     # Uploaded image details
-    image_details = {"filename":uploaded_image.name, "filetype":uploaded_image.type, "filesize":uploaded_image.size}
+    uploaded_image_details = Image.open(uploaded_image)
+    image_details = {"image_format":uploaded_image_details.format, "image_mode":uploaded_image_details.mode, "image_width":uploaded_image_details.width, "image_height":uploaded_image_details.height}
     st.write(image_details)
 
+    # Handles wrong image mode exception
+    if uploaded_image_details.mode == "RGBA":
+        st.warning("The uploaded image file is of mode RGBA, where A indicates transparency.  \n This tool does not work with images containing transparency.  \n Please remove it or try another one")
+        st.stop()
+
+    # Handles too large image resolution where width or height exceeds 2000px
+    if uploaded_image_details.width > 1500 or uploaded_image_details.height > 1500:
+        st.warning("The width or height of the image exceeds 1500 pixels.  \n Please reduce the size and try again as Streamlit's free-tier computing power can not handle it")
+        st.stop()
+
     # Preview the uploaded image
-    img = Image.open(uploaded_image)
+    st.write("Original:")
     st.image(uploaded_image, width=500)
 
     # Call the deeplabv3 and process uploaded image
     deeplab_model = load_model()
-    foreground, bin_mask = remove_background(deeplab_model, uploaded_image)
+    foreground, bin_mask = remove_background(deeplab_model, uploaded_image)    
     processed_image = Image.fromarray(foreground)
 
     # Preview of processd image
+    st.write("Processed:")
     st.image(processed_image, width=500)
 
     # Download button for the processed image
     st.markdown(get_image_download_link(processed_image,'output_image.png','Download'), unsafe_allow_html=True)
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    ##  Old code for the download button. Problem was that it reloads the page after clicking. 
-    ##  Streamlit is apparently working on adding a feature to not reload page.
-    
-            # # Convert to downloadable format
-            # buf = BytesIO()
-            # processed_image.save(buf, format="PNG")
-            # byte_im = buf.getvalue()
-
-            # # Download button
-            # btn = st.download_button(
-            #         label="Download image",
-            #         data=byte_im,
-            #         file_name="image.png",
-            #         mime="image/png"
-            #     )
-
