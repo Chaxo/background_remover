@@ -8,7 +8,7 @@ from torchvision import transforms
 from io import BytesIO
 
 # This cache might solve the memory issue on Streamlit
-@st.cache(allow_output_mutation=True, hash_funcs={torch.nn.parameter.Parameter: lambda _: None})
+# @st.cache(allow_output_mutation=True, hash_funcs={torch.nn.parameter.Parameter: lambda _: None})
 def load_model():
     model = torch.hub.load('pytorch/vision:v0.10.0', 'deeplabv3_resnet101', pretrained=True)
     model.eval()
